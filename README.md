@@ -1,4 +1,4 @@
-## Project OPINION for firebase and Node.js(express) ##
+## Project OPINION for firebase and Node.js (express) ##
 
 ### Install & Run ###
 - source down from github
