@@ -1,7 +1,7 @@
-## Project OPINION for firebase and Node.js(express) ##
+## Project OPINION for firebase and Node.js (express) ##
 
 ### Install & Run ###
-- source down from github
+- Cloning from github
 - npm install
 - npm rebuild
 - npm start
