@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var firebase = require("firebase");
+var server = require('http').Server(express);
+var io = require('socket.io')(server);
 
 var config = {
   apiKey: "AIzaSyBo5SePT0lxxtA40y8QBVvptNbUO1kGApY",
@@ -65,9 +67,14 @@ router.post('/signupChk', function(req, res, next) {
 //로그아웃 로직
 //2019-05-04-라우터 구조 재구성
 router.post('/logout', function(req, res, next) {
-  firebase.auth().signOut().then(function() {
-    res.redirect('login');//로그아웃 후 로그인 페이지 이동
-  });
+  var user = firebase.auth().currentUser;
+  if(!user) {
+    res.redirect('articles');
+  } else {
+    firebase.auth().signOut().then(function() {
+      res.redirect('login');//로그아웃 후 로그인 페이지 이동
+    });
+  }
 });
 
 //글 목록 페이지
@@ -83,7 +90,7 @@ router.post('/logout', function(req, res, next) {
   var articles = db.collection("articles").where('').orderBy().get()//Firebase 에서 해당 유저가 작성한 글 가져오기
     .then()2019-04-29
 });*/
-
+server.listen(3003);
 //글 작성 페이지
 //2019-05-04-라우터 구조 재구성
 router.get('/editArticle', function(req, res, next) {
@@ -91,12 +98,19 @@ router.get('/editArticle', function(req, res, next) {
   if(!user) {
     res.redirect('login');//계정 정보 없을 시, 로그인 페이지로.
   } else {
+    //db.collection("articles").doc();
     res.render('editArticle', { usrmail: user.email });//계정 상태 유효할 시, 글 작성 페이지로.
+    io.on('connection', function(socket) {
+      socket.on('editedContents', function(data) {
+        console.log(data);
+      });
+    });
   }
 });
 
 router.get('/articles', function(req, res, next) {
-  res.render('articles');
+  var user = firebase.auth().currentUser;
+  res.render('articles', { currentUser: user });
 });
 
 module.exports = router;

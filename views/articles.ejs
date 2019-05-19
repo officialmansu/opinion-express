@@ -4,9 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
+    <link rel="stylesheet" href="/stylesheets/style-articles.css">
+    <title>Articles</title>
 </head>
 <body>
-    
+    <div class="title">
+        <h1>글</h1>
+        <button id="edit-article" class="edit-article btn btn-primary" type="button" onclick="location.href='/editArticle'">글 작성</button>
+        <%if (currentUser) { %>
+            <form action="logout" method="POST">
+                <button class="logout btn btn-light" type="submit">로그아웃</button>
+            </form>
+            <script>
+                document.getElementById("edit-article").style.marginRight = "140px";
+            </script>
+        <% } %>
+    </div>
+    <div class="list">
+        <ul class="list-group">
+            <li class="list-group-item">
+                글1
+                <span class="author">officialmansu@gmail.com</span>
+            </li>
+            <li class="list-group-item">
+                글1
+                <span class="author">officialmansu@gmail.com</span>
+            </li>
+            <li class="list-group-item">
+                글1
+                <span class="author">officialmansu@gmail.com</span>
+            </li>
+            <li class="list-group-item">
+                글1
+                <span class="author">officialmansu@gmail.com</span>
+            </li>
+            <li class="list-group-item">
+                글1
+                <span class="author">officialmansu@gmail.com</span>
+            </li>
+        </ul>
+    </div>
+    <script src="/javascripts/jquery-3.4.0.slim.min.js" charset="utf-8"></script>
+    <script src="/javascripts/popper.min.js" charset="utf-8"></script>
+    <script src="/javascripts/bootstrap.min.js" charset="utf-8"></script>
 </body>
 </html>

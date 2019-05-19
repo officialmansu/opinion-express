@@ -26,13 +26,27 @@
     <div class="editable"></div>
     <script src="/javascripts/medium-editor.min.js"></script>
     <script src="/javascripts/jquery-3.4.0.slim.min.js"></script>
+    <script src="/javascripts/socket.io.js"></script>
     <script>
         var editor = new MediumEditor('.editable', {
             spellcheck: false
         });
     </script>
     <script>
-        
+        var socket = io.connect('http://localhost:3003');
+        var content = {
+            article: $('.editable'),
+            title: $('.title'),
+            subtitle: $('.subtitle')
+        }
+        $('.editable').on('input', function() {
+            socket.emit('editedContents', 
+            {
+                article: content.article.html(),
+                title: content.title.html(),
+                subtitle: content.subtitle.html()
+            });
+        });
     </script>
     <script src="/javascripts/popper.min.js"></script>
     <script src="/javascripts/bootstrap.min.js"></script>
