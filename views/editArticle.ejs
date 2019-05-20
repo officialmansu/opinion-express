@@ -47,6 +47,22 @@
                 subtitle: content.subtitle.html()
             });
         });
+        $('.title').on('input', function() {
+            socket.emit('editedContents', 
+            {
+                article: content.article.html(),
+                title: content.title.html(),
+                subtitle: content.subtitle.html()
+            });
+        });
+        $('.subtitle').on('input', function() {
+            socket.emit('editedContents', 
+            {
+                article: content.article.html(),
+                title: content.title.html(),
+                subtitle: content.subtitle.html()
+            });
+        });
     </script>
     <script src="/javascripts/popper.min.js"></script>
     <script src="/javascripts/bootstrap.min.js"></script>

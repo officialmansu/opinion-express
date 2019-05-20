@@ -32,8 +32,8 @@ body {
 
 blockquote {
     font-family: 'Noto Serif', serif;
-    /*text-align: center;
-    font-size: 10px;*/
+    /*text-align: center;*/
+    font-size: 20px;
     border-left: 3px solid gray;
     padding-top: 10px;
     padding-left: 10px;

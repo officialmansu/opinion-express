@@ -4,20 +4,23 @@ var firebase = require("firebase");
 var server = require('http').Server(express);
 var io = require('socket.io')(server);
 
-var config = {
+var firebaseConfig = {
   apiKey: "AIzaSyBo5SePT0lxxtA40y8QBVvptNbUO1kGApY",
   authDomain: "opinion-express.firebaseapp.com",
   databaseURL: "https://opinion-express.firebaseio.com",
   projectId: "opinion-express",
   storageBucket: "opinion-express.appspot.com",
-  messagingSenderId: "978199192904"
+  messagingSenderId: "978199192904",
+  appId: "1:978199192904:web:aa91748de9114389"
 };
-firebase.initializeApp(config);
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
 var db = firebase.firestore();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index');
+  var user = firebase.auth().currentUser;
+  res.render('index', { currentUser: user });
 });
 
 //로그인 페이지
@@ -98,11 +101,21 @@ router.get('/editArticle', function(req, res, next) {
   if(!user) {
     res.redirect('login');//계정 정보 없을 시, 로그인 페이지로.
   } else {
-    //db.collection("articles").doc();
     res.render('editArticle', { usrmail: user.email });//계정 상태 유효할 시, 글 작성 페이지로.
+    var doc = db.collection("articles").doc();
+    var currentTime = new Date();
+    var postData = {
+      author: user.email,
+      id: doc.id,
+      createdYear: currentTime.getFullYear(),
+      createdMonth: currentTime.getMonth() + 1,
+      createdDay: currentTime.getDate()
+    }
+    doc.set(postData);
     io.on('connection', function(socket) {
       socket.on('editedContents', function(data) {
         console.log(data);
+
       });
     });
   }

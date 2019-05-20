@@ -16,8 +16,18 @@
         <p class="subtitle">Sample SubTitle</p>
     </div>
     <div class="fixed-top">
-        <button type="button" class="btn btn-primary new-article articles" onclick="location.href='/articles'">글 목록</button>
-        <button type="button" class="btn btn-primary new-article" onclick="location.href='/login'">로그인</button>
+        <button type="button" id="articles" class="btn btn-primary new-article articles" onclick="location.href='/articles'">글 목록</button>
+        <% if(!currentUser) { %>
+          <button type="button" class="btn btn-primary new-article" onclick="location.href='/login'">로그인</button>
+        <% } else { %>
+          <form action="logout" method="post">
+            <button type="submit" class="btn btn-primary new-article">로그아웃</button>
+          </form>
+          <script>
+            document.getElementById('articles').style.marginRight = "140px";
+          </script>
+        <% } %>
+        
     </div>
   </div>
   <script src="/javascripts/jquery-3.4.0.slim.min.js" charset="utf-8"></script>
