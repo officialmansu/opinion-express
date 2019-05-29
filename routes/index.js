@@ -3,6 +3,7 @@ var router = express.Router();
 var firebase = require("firebase");
 var server = require('http').Server(express);
 var io = require('socket.io')(server);
+var dateFormat = require('dateformat');
 
 var firebaseConfig = {
   apiKey: "AIzaSyBo5SePT0lxxtA40y8QBVvptNbUO1kGApY",
@@ -103,19 +104,23 @@ router.get('/editArticle', function(req, res, next) {
   } else {
     res.render('editArticle', { usrmail: user.email });//계정 상태 유효할 시, 글 작성 페이지로.
     var doc = db.collection("articles").doc();
-    var currentTime = new Date();
     var postData = {
       author: user.email,
       id: doc.id,
-      createdYear: currentTime.getFullYear(),
-      createdMonth: currentTime.getMonth() + 1,
-      createdDay: currentTime.getDate()
+      currentTime: new Date()
     }
     doc.set(postData);
     io.on('connection', function(socket) {
       socket.on('editedContents', function(data) {
         console.log(data);
-
+        postData.title = data.title;
+        postData.subtitle = data.subtitle;
+        postData.article = data.article;
+        postData.currentTime = new Date()
+        db.collection("articles").doc(postData.id).update(postData);
+        console.log("-----");
+        console.log(postData.id);
+        console.log("-----");
       });
     });
   }
@@ -123,7 +128,19 @@ router.get('/editArticle', function(req, res, next) {
 
 router.get('/articles', function(req, res, next) {
   var user = firebase.auth().currentUser;
-  res.render('articles', { currentUser: user });
+  db.collection('articles').orderBy("currentTime").get()
+    .then((response) => {
+      var articles = [];
+      response.forEach((doc) => {
+        var articleData = doc.data();
+        //articleData.currentTime = articleData.currentTime.format("yyyy-mm-dd");
+        articles.push(articleData);
+      });
+      res.render('articles', { currentUser: user, articles: articles });
+    }).catch((err) => {
+      console.log(err);
+    });
+  //console.log(articles);
 });
 
 module.exports = router;

@@ -22,28 +22,14 @@
         <% } %>
     </div>
     <div class="list">
-        <ul class="list-group">
-            <li class="list-group-item">
-                글1
-                <span class="author">officialmansu@gmail.com</span>
-            </li>
-            <li class="list-group-item">
-                글1
-                <span class="author">officialmansu@gmail.com</span>
-            </li>
-            <li class="list-group-item">
-                글1
-                <span class="author">officialmansu@gmail.com</span>
-            </li>
-            <li class="list-group-item">
-                글1
-                <span class="author">officialmansu@gmail.com</span>
-            </li>
-            <li class="list-group-item">
-                글1
-                <span class="author">officialmansu@gmail.com</span>
-            </li>
-        </ul>
+        <% for(var i=0;i < articles.length; i++) { %>
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <%= articles[i].title %>
+                    <span class="author"><%= articles[i].author %></span>
+                </li>
+            </ul>
+        <% } %>
     </div>
     <script src="/javascripts/jquery-3.4.0.slim.min.js" charset="utf-8"></script>
     <script src="/javascripts/popper.min.js" charset="utf-8"></script>
