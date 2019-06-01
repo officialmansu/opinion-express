@@ -97,30 +97,31 @@ router.post('/logout', function(req, res, next) {
 server.listen(3003);
 //글 작성 페이지
 //2019-05-04-라우터 구조 재구성
-router.get('/editArticle', function(req, res, next) {
+router.get('/editArticle', (req, res, next) => {
   var user = firebase.auth().currentUser;
   if(!user) {
     res.redirect('login');//계정 정보 없을 시, 로그인 페이지로.
   } else {
-    res.render('editArticle', { usrmail: user.email });//계정 상태 유효할 시, 글 작성 페이지로.
+    res.render('editArticle', { usrmail: user.email });//계정 상태 유효할 시, 글 작성 페이지로
     var doc = db.collection("articles").doc();
     var postData = {
       author: user.email,
-      id: doc.id,
+      articleId: doc.id,
       currentTime: new Date()
     }
-    doc.set(postData);
-    io.on('connection', function(socket) {
-      socket.on('editedContents', function(data) {
+    doc.set(postData); //1 doc is created.
+    
+    io.on('connection', (socket) => {
+      socket.on('editedContents', (data) => {
         console.log(data);
         postData.title = data.title;
         postData.subtitle = data.subtitle;
         postData.article = data.article;
-        postData.currentTime = new Date()
-        db.collection("articles").doc(postData.id).update(postData);
-        console.log("-----");
-        console.log(postData.id);
-        console.log("-----");
+        postData.currentTime = new Date();
+        db.collection("articles").doc(postData.articleId).set(postData);//updating doc (it was created at 112)
+        console.log("-----DEBUG(articleNum)-----");//Debugging for postData.articleId
+        console.log(postData.articleId);//Why the postData.articleId was piled up like snowball?
+        console.log("-----DEBUG(articleNum)-----");
       });
     });
   }
