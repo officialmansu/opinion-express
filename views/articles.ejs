@@ -25,7 +25,7 @@
         <% for(var i=0;i < articles.length; i++) { %>
             <ul class="list-group">
                 <li class="list-group-item">
-                    <%= articles[i].title %>
+                    <span onclick="location.href = '/viewArticle/<%= articles[i].id%>'"><%= articles[i].title %></span>
                     <span class="author"><%= articles[i].author %></span>
                 </li>
             </ul>

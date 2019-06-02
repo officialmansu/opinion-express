@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="/stylesheets/medium-editor.min.css" type="text/css" media="screen" charset="utf-8">
+    <link href="https://fonts.googleapis.com/css?family=Noto+Serif" rel="stylesheet">
+    <link rel="stylesheet" href="/stylesheets/default.css">
+    <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
+    <link rel="stylesheet" href="/stylesheets/edit-article.css">
+    <title>Document</title>
+</head>
+<body>
+    <div class="container-fluid title-container">
+        <div class="row">
+            <div class="col-8">
+                <h2 class="title" spellcheck="false"></h2>
+                <p class="subtitle" spellcheck="false"></p>
+            </div>
+            <div class="col-4">
+                <h6 class="author"><%= articleBody.author%></h6>
+            </div>
+        </div>
+    </div>
+    <div class="editable"></div>
+    <script>
+        function htmlDecode(input) {
+            var doc = new DOMParser().parseFromString(input, "text/html");
+            return doc.documentElement.textContent;
+        }
+        
+        var titleContainer = document.querySelector('h2');
+        var subtitleContainer = document.querySelector('p');
+        var articleContainer = document.querySelectorAll('div')[4];
+
+        titleContainer.innerHTML = htmlDecode("<%= articleBody.title%>");
+        subtitleContainer.innerHTML = htmlDecode("<%= articleBody.subtitle%>");
+        articleContainer.innerHTML = htmlDecode("<%= articleBody.article%>");
+    </script>
+    <script src="/javascripts/jquery-3.4.0.slim.min.js"></script>
+    <script src="/javascripts/popper.min.js"></script>
+    <script src="/javascripts/bootstrap.min.js"></script>
+</body>
+</html>
+
+<!--수정 방법은 jQuery .append("저장된 내용") 으로 불러오면 된다.-->
+<!--저장 방법은 editor.getContent해서 나온 HTML코드를 저장하면 된다.-->

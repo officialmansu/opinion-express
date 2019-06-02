@@ -117,6 +117,7 @@ router.get('/editArticle', (req, res, next) => {
         console.log("----- socket내부 -----");
         //console.log(docId);
         console.log(data);
+        postData.id = data.articleId;
         postData.title = data.title;
         postData.subtitle = data.subtitle;
         postData.article = data.article;
@@ -129,6 +130,20 @@ router.get('/editArticle', (req, res, next) => {
       });
     });
   }
+});
+
+router.get('/viewArticle/:id', function(req, res, next) {
+  var doc = db.collection("articles").doc(req.params.id);
+  var getDoc = doc.get()
+    .then(doc => {
+      if(!doc.exists) {
+        console.log("Doc is NOT exist.");
+      } else {
+        res.render('viewArticle', { articleBody: doc.data() });
+      }
+    }).catch(err => {
+      console.log(err);
+    });
 });
 
 router.get('/articles', function(req, res, next) {
