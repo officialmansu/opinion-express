@@ -99,7 +99,6 @@ router.post('/logout', function(req, res, next) {
 //2019-05-04-라우터 구조 재구성
 server.listen(3003);
 router.get('/editArticle', (req, res, next) => {
-  
   var user = firebase.auth().currentUser;
   if(!user) {
     res.redirect('login');//계정 정보 없을 시, 로그인 페이지로.
@@ -112,13 +111,9 @@ router.get('/editArticle', (req, res, next) => {
     }
     doc.set(postData); //1 doc is created.
     res.render('editArticle', { usrmail: user.email, articleId: doc.id });//계정 상태 유효할 시, 글 작성 페이지로
-    /*console.log("----- socket전 -----");
-    console.log(docId);
-    console.log("----- socket전 -----");*/
     io.on('connection', (socket) => {
       socket.on('editedContents', (data) => {
         console.log("----- socket내부 -----");
-        //console.log(docId);
         console.log(data);
         postData.id = data.articleId;
         postData.title = data.title;
@@ -126,18 +121,12 @@ router.get('/editArticle', (req, res, next) => {
         postData.article = data.article;
         postData.currentTime = new Date();
         db.collection("articles").doc(data.articleId).set(postData);//updating doc (it was created at 112)
-        /*console.log("-----DEBUG(articleNum)-----");//Debugging for postData.articleId
-        console.log(postData.articleId);//Why the postData.articleId was piled up like snowball?
-        console.log("-----DEBUG(articleNum)-----");
-        console.log("----- socket내부 -----");*/
       });
     });
   }
 });
 
-//server.listen(3004);
 router.get('/updateArticle/:id', function(req, res, next) {
-  
   var user = firebase.auth().currentUser;
   if(!user) {
     res.redirect('login');
@@ -150,7 +139,6 @@ router.get('/updateArticle/:id', function(req, res, next) {
           article: response.data().article,
           author: response.data().author
         }
-        //console.log(response.data());
         res.render('updateArticle', { article: response.data() });
         io.on('connection', (socket) => {
           socket.on('editedContents', (data) => {
@@ -170,7 +158,7 @@ router.get('/updateArticle/:id', function(req, res, next) {
 
 router.get('/viewArticle/:id', function(req, res, next) {
   var doc = db.collection("articles").doc(req.params.id);
-  var getDoc = doc.get()
+  doc.get()
     .then(doc => {
       if(!doc.exists) {
         console.log("Doc is NOT exist.");
@@ -198,7 +186,9 @@ router.get('/articles/:author', function(req, res, next) {
         res.render('articles', { currentUser: user.email, articles: articles });
       }
     }).catch((err) => {
+      console.log("-----at '/articles/all'-----");
       console.log(err);
+      console.log("-----at '/articles/all'-----");
     });
   } else if(req.params.author) {
     db.collection('articles').orderBy("currentTime").where("author", "==", req.params.author).get()

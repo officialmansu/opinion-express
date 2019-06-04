@@ -7,6 +7,11 @@
     <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
     <link rel="stylesheet" href="/stylesheets/style-articles.css">
     <title>Articles</title>
+    <style>
+        .author-container {
+            margin-right: 0;
+        }
+    </style>
 </head>
 <body>
     <div class="title">
@@ -28,6 +33,9 @@
                     <span class="title-container" onclick="location.href = '/viewArticle/<%= articles[i].id%>'"><%= articles[i].title %></span>
                     <span class="author-container" onclick="location.href = '/articles/<%= articles[i].author %>'"><%= articles[i].author %></span>
                     <%if (currentUser == articles[i].author) { %>
+                        <script>
+                            document.querySelectorAll(".author-container")[<%= i%>].style.marginRight = 130 + 'px';
+                        </script>
                         <span>
                             <button type="button" class="btn btn-light edit" onclick="location.href = '/updateArticle/<%= articles[i].id%>'">수정</button>
                             <form action="/delete" method="post">
