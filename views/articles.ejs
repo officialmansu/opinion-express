@@ -13,7 +13,7 @@
         <h1>글</h1>
         <button id="edit-article" class="edit-article btn btn-primary" type="button" onclick="location.href='/editArticle'">글 작성</button>
         <%if (currentUser) { %>
-            <form action="logout" method="POST">
+            <form action="/logout" method="POST">
                 <button class="logout btn btn-light" type="submit">로그아웃</button>
             </form>
             <script>
@@ -25,8 +25,17 @@
         <% for(var i=0;i < articles.length; i++) { %>
             <ul class="list-group">
                 <li class="list-group-item">
-                    <span onclick="location.href = '/viewArticle/<%= articles[i].id%>'"><%= articles[i].title %></span>
-                    <span class="author"><%= articles[i].author %></span>
+                    <span class="title-container" onclick="location.href = '/viewArticle/<%= articles[i].id%>'"><%= articles[i].title %></span>
+                    <span class="author-container" onclick="location.href = '/articles/<%= articles[i].author %>'"><%= articles[i].author %></span>
+                    <%if (currentUser == articles[i].author) { %>
+                        <span>
+                            <button type="button" class="btn btn-light edit" onclick="location.href = '/updateArticle/<%= articles[i].id%>'">수정</button>
+                            <form action="/delete" method="post">
+                                <input type="hidden" name="id" value="<%= articles[i].id%>">
+                                <button type="submit" class="btn btn-light remove">삭제</button>
+                            </form>
+                        </span>
+                    <% } %>
                 </li>
             </ul>
         <% } %>

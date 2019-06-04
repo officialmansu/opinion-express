@@ -18,8 +18,8 @@ button {
 
 .list {
     box-shadow: 0px 0px 6px 0px rgba(0,0,0,0.75);
-    width: 70%;
     margin-left: 50px;
+    margin-right: 50px;
     border-radius: .25rem;
 }
 
@@ -43,4 +43,16 @@ form {
     position: absolute;
     right: 0;
     margin-right: 20px;
+}
+.edit {
+    top: 5px;
+    margin-right: 70px;
+}
+.remove {
+    top: 5px;
+    margin-right: 5px;
+}
+.author-container {
+    float: right;
+    margin-right: 130px;
 }

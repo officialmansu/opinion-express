@@ -31,7 +31,7 @@ router.get('/login', function(req, res, next) {
   if(!user) {
     res.render('login', { message: '' });//로그인 되어있지 않을 시 로그인 페이지로
   } else {
-    res.redirect('articles');//로그인 시 글 index 페이지로
+    res.redirect('articles/all');//로그인 시 글 index 페이지로
   }
 });
 
@@ -40,7 +40,7 @@ router.get('/login', function(req, res, next) {
 router.post('/loginChk', function(req, res, next) {
   firebase.auth().signInWithEmailAndPassword(req.body.email, req.body.passwd)
     .then(function(user) {
-      res.redirect('articles');//글 작성 페이지 이동
+      res.redirect('articles/all');//글 작성 페이지 이동
     }).catch(function(error) {
       res.redirect('login');//로그인 페이지 이동
     });
@@ -73,10 +73,10 @@ router.post('/signupChk', function(req, res, next) {
 router.post('/logout', function(req, res, next) {
   var user = firebase.auth().currentUser;
   if(!user) {
-    res.redirect('articles');
+    res.redirect('articles/all');
   } else {
     firebase.auth().signOut().then(function() {
-      res.redirect('login');//로그아웃 후 로그인 페이지 이동
+      res.redirect('/');//로그아웃 후 로그인 페이지 이동
     });
   }
 });
@@ -94,10 +94,12 @@ router.post('/logout', function(req, res, next) {
   var articles = db.collection("articles").where('').orderBy().get()//Firebase 에서 해당 유저가 작성한 글 가져오기
     .then()2019-04-29
 });*/
-server.listen(3003);
+
 //글 작성 페이지
 //2019-05-04-라우터 구조 재구성
+server.listen(3003);
 router.get('/editArticle', (req, res, next) => {
+  
   var user = firebase.auth().currentUser;
   if(!user) {
     res.redirect('login');//계정 정보 없을 시, 로그인 페이지로.
@@ -105,7 +107,8 @@ router.get('/editArticle', (req, res, next) => {
     var doc = db.collection("articles").doc();
     var postData = {
       author: user.email,
-      currentTime: new Date()
+      currentTime: new Date(),
+      id: doc.id
     }
     doc.set(postData); //1 doc is created.
     res.render('editArticle', { usrmail: user.email, articleId: doc.id });//계정 상태 유효할 시, 글 작성 페이지로
@@ -132,6 +135,39 @@ router.get('/editArticle', (req, res, next) => {
   }
 });
 
+//server.listen(3004);
+router.get('/updateArticle/:id', function(req, res, next) {
+  
+  var user = firebase.auth().currentUser;
+  if(!user) {
+    res.redirect('login');
+  } else {
+    db.collection('articles').doc(req.params.id).get()
+      .then((response) => {
+        var postData = {
+          title: response.data().title,
+          subtitle: response.data().subtitle,
+          article: response.data().article,
+          author: response.data().author
+        }
+        //console.log(response.data());
+        res.render('updateArticle', { article: response.data() });
+        io.on('connection', (socket) => {
+          socket.on('editedContents', (data) => {
+            postData.title = data.title;
+            postData.subtitle = data.subtitle;
+            postData.article = data.article;
+            postData.currentTime = new Date();
+            postData.id = data.articleId;
+            db.collection('articles').doc(data.articleId).set(postData);
+          });
+        });
+      }).catch((err) => {
+        console.log(err);
+      });
+  }
+});
+
 router.get('/viewArticle/:id', function(req, res, next) {
   var doc = db.collection("articles").doc(req.params.id);
   var getDoc = doc.get()
@@ -146,21 +182,58 @@ router.get('/viewArticle/:id', function(req, res, next) {
     });
 });
 
-router.get('/articles', function(req, res, next) {
+router.get('/articles/:author', function(req, res, next) {
   var user = firebase.auth().currentUser;
-  db.collection('articles').orderBy("currentTime").get()
+  if(req.params.author == 'all') {
+    db.collection('articles').orderBy("currentTime").get()
     .then((response) => {
       var articles = [];
       response.forEach((doc) => {
         var articleData = doc.data();
-        //articleData.currentTime = articleData.currentTime.format("yyyy-mm-dd");
         articles.push(articleData);
       });
-      res.render('articles', { currentUser: user, articles: articles });
+      if(!user) {
+        res.render('articles', { currentUser: user, articles: articles });//currentUser 삭제 후 반응 보기
+      } else {
+        res.render('articles', { currentUser: user.email, articles: articles });
+      }
     }).catch((err) => {
       console.log(err);
     });
+  } else if(req.params.author) {
+    db.collection('articles').orderBy("currentTime").where("author", "==", req.params.author).get()
+      .then((response) => {
+        var articles = [];
+        response.forEach((doc) => {
+          var articleData = doc.data();
+          articles.push(articleData);
+        });
+        if(!user) {
+          res.render('articles', { currentUser: user, articles: articles });//currentUser 삭제 후 반응 보기
+        } else {
+          res.render('articles', { currentUser: user.email, articles: articles });
+        }
+      }).catch((err) => {
+        console.log("-----at '/articles/:author'-----");
+        console.log(err);
+        console.log("-----at '/articles/:author'-----");
+      })
+  }
   //console.log(articles);
+});
+
+router.post('/delete', function(req, res, next) {
+  console.log("-----at '/delete'-----");
+  console.log(req.body.id);
+  console.log("-----at '/delete'-----");
+  db.collection('articles').doc(req.body.id).delete()
+    .then(() => {
+      res.redirect('articles/all');
+    }).catch((err) => {
+      console.log("-----at '/delete'-----");
+      console.log(err);
+      console.log("-----at '/delete'-----");
+    });
 });
 
 module.exports = router;
