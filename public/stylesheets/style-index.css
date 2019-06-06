@@ -1,44 +1,45 @@
 .main-screen {
-  background-image: url('https://source.unsplash.com/category/nature/1600x900');
-  width: 100%;
-  height: 100vh;
-}
-.new-article {
-  position: fixed;
-  right: 0;
-  margin-right: 35px;
-  margin-top: 30px;
+	background-image: url('https://source.unsplash.com/category/nature/1600x900');
+	width: 100%;
+	height: 100vh;
 }
 .title-container {
-  position: absolute;
-  bottom: 0;
-  margin-left: 35px;
-  margin-bottom: 30px;
-  background-color: rgb(240, 248, 255, 0.7);
-  padding-left: 15px;
-  padding-right: 15px;
-  padding-top: 10px;
-  -webkit-box-shadow: 0px 1px 5px 1px rgba(0,0,0,0.75);
-  -moz-box-shadow: 0px 1px 5px 1px rgba(0,0,0,0.75);
-  box-shadow: 0px 1px 5px 1px rgba(0,0,0,0.75);
+	position: absolute;
+	bottom: 0;
+	margin-left: 35px;
+	margin-bottom: 30px;
+	background-color: rgb(240, 248, 255, 0.7);
+	padding-left: 15px;
+	padding-right: 15px;
+	padding-top: 10px;
+	-webkit-box-shadow: 0px 1px 5px 1px rgba(0,0,0,0.75);
+	-moz-box-shadow: 0px 1px 5px 1px rgba(0,0,0,0.75);
+	box-shadow: 0px 1px 5px 1px rgba(0,0,0,0.75);
 }
 .title-container:hover {
-  -webkit-box-shadow: 0px 0px 10px 1px rgba(0,0,0,0.75);
--moz-box-shadow: 0px 0px 10px 1px rgba(0,0,0,0.75);
-box-shadow: 0px 0px 10px 1px rgba(0,0,0,0.75);
-  transition: 0.5s;
+  	-webkit-box-shadow: 0px 0px 10px 1px rgba(0,0,0,0.75);
+	-moz-box-shadow: 0px 0px 10px 1px rgba(0,0,0,0.75);
+	box-shadow: 0px 0px 10px 1px rgba(0,0,0,0.75);
+  	transition: 0.5s;
 }
 .title {
-  display: inline;
-  margin-right: 10px;
+  	display: inline;
+  	margin-right: 10px;
 }
 .author {
-  display: inline;
+  	display: inline;
 }
 .subtitle {
-  margin-top: 10px;
+  	margin-top: 10px;
 }
-
 .articles {
-  margin-right: 130px;
+  	margin-right: 130px;
+}
+.login {
+	margin-right: 35px;
+}
+.btn {
+	position: fixed;
+	right: 0;
+  	margin-top: 30px;	
 }

@@ -21,13 +21,11 @@
 			}
 			
 			.articles {
-				display: block;
-				margin: auto;
-				width: 85%;
 				margin-bottom: 15px;
+				margin-right: 0;
 			}
 			
-			.new-article {
+			.btn {
 				display: block;
 				margin: auto;
 				width: 85%;
@@ -44,15 +42,15 @@
         <p class="subtitle">Sample SubTitle</p>
     </div>
     <div class="fixed-top">
-        <button type="button" id="articles" class="btn btn-primary new-article articles" onclick="location.href='/articles/all'">글 목록</button>
+        <button type="button" class="btn btn-primary articles" onclick="location.href='/articles/all'">글 목록</button>
         <% if(!currentUser) { %>
-          <button type="button" class="btn btn-primary new-article" onclick="location.href='/login'">로그인</button>
+          <button type="button" class="btn btn-primary login" onclick="location.href='/login'">로그인</button>
         <% } else { %>
           <form action="logout" method="post">
-            <button type="submit" class="btn btn-primary new-article">로그아웃</button>
+            <button type="submit" class="btn btn-primary">로그아웃</button>
           </form>
           <script>
-            document.getElementById('articles').style.marginRight = "140px";
+            document.querySelector('.articles').style.marginRight = "140px";
           </script>
         <% } %>
         
