@@ -48,7 +48,9 @@ router.post('/loginChk', (req, res, next) => {
 		req.session.usrmail = req.body.email;
 		res.redirect('articles/all'); //글 작성 페이지 이동
 	}).catch((err) => {
+		console.log("-----Error at '/loginChk'-----");
 		res.redirect('login'); //로그인 페이지 이동
+		console.log("-----Error at '/loginChk'-----");
 	});
 });
 
@@ -70,7 +72,9 @@ router.post('/signupChk', (req, res, next) => {
     firebase.auth().createUserWithEmailAndPassword(req.body.email, req.body.passwd).then(() => {
         res.redirect('login'); //성공 시 로그인 페이지로
     }).catch((err) => {
+		console.log("-----Error at '/signupChk'-----");
         res.redirect('signup'); //실패 시 signup 페이지로
+		console.log("-----Error at '/signupChk'-----");
     });
 });
 
@@ -89,10 +93,14 @@ server.listen(3003);
 router.get('/editArticle', (req, res, next) => {
 	if(req.session.isLogin) {
 		var doc = db.collection("articles").doc();
+		var count = db.collection("count").doc("count");
+		count = db.collection("count").doc("count").get();
 		var postData = {
 			author: req.session.usrmail,
 			currentTime: new Date(),
-			id: doc.id
+			id: doc.id,
+			title: "Sample Title",
+			subtitle: "Sample Subtitle"
 		};
 		doc.set(postData); //1 doc is created.
 		res.render('editArticle', {
@@ -139,7 +147,9 @@ router.get('/updateArticle/:id', (req, res, next) => {
 				});
 			});
 		}).catch((err) => {
+			console.log("-----Error at '/updateArticle/:id'-----");
 			console.log(err);
+			console.log("-----Error at '/updateArticle/:id'-----");
 		});
 	} else {
 		res.redirect('login');
@@ -157,7 +167,9 @@ router.get('/viewArticle/:id', (req, res, next) => {
 			});
 		}
 	}).catch((err) => {
+		console.log("-----Error at /viewArticle/"+req.params.id+"-----");
 		console.log(err);
+		console.log("-----Error at /viewArticle/"+req.params.id+"-----");
 	});
 });
 
@@ -175,9 +187,9 @@ router.get('/articles/:author', (req, res, next) => {
 				articles: articles
 			});//확인 필요
 		}).catch((err) => {
-			console.log("-----at '/articles/all'-----");
+			console.log("-----Error at '/articles/all'-----");
 			console.log(err);
-			console.log("-----at '/articles/all'-----");
+			console.log("-----Error at '/articles/all'-----");
 		});
     } else if (req.params.author) {
         db.collection('articles').orderBy("currentTime").where("author", "==", req.params.author).get().then((response) => {
@@ -191,11 +203,13 @@ router.get('/articles/:author', (req, res, next) => {
 				articles: articles
 			});
 		}).catch((err) => {
-			console.log("-----at '/articles/:author'-----");
+			console.log("-----Error at /articles/"+req.params.author+"-----");
 			console.log(err);
-			console.log("-----at '/articles/:author'-----");
+			console.log("-----Error at /articles/"+req.params.author+"-----");
 		});
-    }
+    } else {
+		res.redirect('/error');
+	}
 });
 
 router.post('/delete', function (req, res, next) {
@@ -205,10 +219,14 @@ router.post('/delete', function (req, res, next) {
     db.collection('articles').doc(req.body.id).delete().then(() => {
 		res.redirect('articles/all');
 	}).catch((err) => {
-		console.log("-----at '/delete'-----");
+		console.log("-----Error at /delete("+req.body.id+")-----");
 		console.log(err);
-		console.log("-----at '/delete'-----");
+		console.log("-----Error at /delete("+req.body.id+")-----");
 	});
+});
+
+router.get('/error', (req, res, next) => {
+	res.render('error');
 });
 
 module.exports = router;
