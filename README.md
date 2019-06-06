@@ -2,7 +2,7 @@
 
 ### Install & Run ###
 - Cloning from github
-(git clone -b develop --single-branch https://github.com/officialmansu/opinion-express.git)
+(git clone -b daily --single-branch https://github.com/officialmansu/opinion-express.git)
 - npm install
 - npm rebuild
 - npm start
