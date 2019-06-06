@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -48,8 +49,18 @@
         subtitleContainer.innerHTML = htmlDecode("<%= article.subtitle%>");
         articleContainer.innerHTML = htmlDecode("<%= article.article%>");
     </script>
+	<script>
+		function clearText(elem) {
+			var el = document.querySelector(elem);
+			el.addEventListener('click', function() {
+				el.innerText = '';
+			});
+		}
+		clearText(".title");
+		clearText(".subtitle");
+	</script>
     <script>
-        var socket = io.connect('http://localhost:3003');
+        var socket = io.connect('http://13.125.220.85:58030');
         var content = {
             article: $('.editable'),
             title: $('.title'),

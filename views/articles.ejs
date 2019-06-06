@@ -27,19 +27,19 @@
         <% } %>
     </div>
     <div class="list">
-        <% for(var i=0;i < articles.length; i++) { %>
+        <% for(var i=1;i <= articles.length; i++) { %>
             <ul class="list-group">
                 <li class="list-group-item">
-                    <span class="title-container" onclick="location.href = '/viewArticle/<%= articles[i].id%>'"><%= articles[i].title %></span>
-                    <span class="author-container" onclick="location.href = '/articles/<%= articles[i].author %>'"><%= articles[i].author %></span>
-                    <%if (currentUser == articles[i].author) { %>
+                    <span class="title-container" onclick="location.href = '/viewArticle/<%= articles[articles.length-i].id%>'"><%= articles[articles.length-i].title %></span>
+                    <span class="author-container" onclick="location.href = '/articles/<%= articles[articles.length-i].author %>'"><%= articles[articles.length-i].author %></span>
+                    <%if (currentUser == articles[articles.length-i].author) { %>
                         <script>
-                            document.querySelectorAll(".author-container")[<%= i%>].style.marginRight = 130 + 'px';
+                            document.querySelectorAll(".author-container")[<%= i-1%>].style.marginRight = 130 + 'px';
                         </script>
                         <span>
-                            <button type="button" class="btn btn-light edit" onclick="location.href = '/updateArticle/<%= articles[i].id%>'">수정</button>
+                            <button type="button" class="btn btn-light edit" onclick="location.href = '/updateArticle/<%= articles[articles.length-i].id%>'">수정</button>
                             <form action="/delete" method="post">
-                                <input type="hidden" name="id" value="<%= articles[i].id%>">
+                                <input type="hidden" name="id" value="<%= articles[articles.length-i].id%>">
                                 <button type="submit" class="btn btn-light remove">삭제</button>
                             </form>
                         </span>
