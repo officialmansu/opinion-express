@@ -4,7 +4,6 @@ var router = express.Router();
 var firebase = require("firebase");
 var server = require('http').Server(express);
 var io = require('socket.io')(server);
-var dateFormat = require('dateformat');
 
 var firebaseConfig = {
     apiKey: "AIzaSyBo5SePT0lxxtA40y8QBVvptNbUO1kGApY",
@@ -19,16 +18,32 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 var db = firebase.firestore();
 
+const articlesRef = db.collection("articles");
+const countRef = db.collection("count").doc("count");
+
 /* GET home page. */
-router.get('/', (req, res, next) => {
-	res.render('index', {
-		currentUser: req.session.isLogin
+router.get('/', (req, res) => {
+	articlesRef.get().then((response) => {
+		var articles = [];
+		response.forEach((doc) => {
+			var articleData = doc.data();
+			articles.push(articleData);
+		});
+		var len = articles.length;
+		res.render('index', {
+			currentUser: req.session.isLogin,
+			docInfo: articles[Math.floor(Math.random()*100)%len]
+		});
+	}).catch((err) => {
+		console.log("-----Error(get count) at '/'-----");
+		console.log(err);
+		console.log("-----Error(get count) at '/'-----");
 	});
 });
 
 //로그인 페이지
 //2019-05-04-라우터 구조 재구성
-router.get('/login', (req, res, next) => {
+router.get('/login', (req, res) => {
 	if (req.session.isLogin) {
 		res.redirect('articles/all');
 		//로그인 되어있지 않을 시 로그인 페이지로
@@ -42,13 +57,14 @@ router.get('/login', (req, res, next) => {
 
 //로그인 로직
 //2019-05-04-라우터 구조 재구성
-router.post('/loginChk', (req, res, next) => {
-	firebase.auth().signInWithEmailAndPassword(req.body.email, req.body.passwd).then((user) => {
+router.post('/loginChk', (req, res) => {
+	firebase.auth().signInWithEmailAndPassword(req.body.email, req.body.passwd).then(() => {
 		req.session.isLogin = true;
 		req.session.usrmail = req.body.email;
 		res.redirect('articles/all'); //글 작성 페이지 이동
 	}).catch((err) => {
 		console.log("-----Error at '/loginChk'-----");
+		console.log(err);
 		res.redirect('login'); //로그인 페이지 이동
 		console.log("-----Error at '/loginChk'-----");
 	});
@@ -56,7 +72,7 @@ router.post('/loginChk', (req, res, next) => {
 
 //계정 추가 페이지
 //2019-05-04-라우터 구조 재구성
-router.get('/signup', (req, res, next) => {
+router.get('/signup', (req, res) => {
 	if (req.session.isLogin) {
 		res.redirect('/'); //로그인 true 시 index 페이지 이동
 	} else {
@@ -68,11 +84,12 @@ router.get('/signup', (req, res, next) => {
 
 //계정 추가 로직
 //2019-05-04-라우터 구조 재구성
-router.post('/signupChk', (req, res, next) => {
+router.post('/signupChk', (req, res) => {
     firebase.auth().createUserWithEmailAndPassword(req.body.email, req.body.passwd).then(() => {
         res.redirect('login'); //성공 시 로그인 페이지로
     }).catch((err) => {
 		console.log("-----Error at '/signupChk'-----");
+		console.log(err);
         res.redirect('signup'); //실패 시 signup 페이지로
 		console.log("-----Error at '/signupChk'-----");
     });
@@ -80,7 +97,7 @@ router.post('/signupChk', (req, res, next) => {
 
 //로그아웃 로직
 //2019-05-04-라우터 구조 재구성
-router.post('/logout', (req, res, next) => {
+router.post('/logout', (req, res) => {
 	firebase.auth().signOut().then(() => {
 		req.session.destroy();
 		res.redirect('/'); //로그아웃 후 로그인 페이지 이동
@@ -90,33 +107,41 @@ router.post('/logout', (req, res, next) => {
 //글 작성 페이지
 //2019-05-04-라우터 구조 재구성
 server.listen(3003);
-router.get('/editArticle', (req, res, next) => {
+router.get('/editArticle', (req, res) => {
 	if(req.session.isLogin) {
-		var doc = db.collection("articles").doc();
-		var count = db.collection("count").doc("count");
-		count = db.collection("count").doc("count").get();
-		var postData = {
-			author: req.session.usrmail,
-			currentTime: new Date(),
-			id: doc.id,
-			title: "Sample Title",
-			subtitle: "Sample Subtitle"
-		};
-		doc.set(postData); //1 doc is created.
-		res.render('editArticle', {
-			usrmail: req.session.usrmail,
-			articleId: doc.id
-		}); //계정 상태 유효할 시, 글 작성 페이지로
-		io.on('connection', (socket) => {
-			socket.on('editedContents', (data) => {
-				console.log("----- socket내부 -----");
-				console.log(data);
-				postData.id = data.articleId;
-				postData.title = data.title;
-				postData.subtitle = data.subtitle;
-				postData.article = data.article;
-				postData.currentTime = new Date();
-				db.collection("articles").doc(data.articleId).set(postData); //updating doc (it was created at 112)
+		var doc = articlesRef.doc();
+		countRef.get().then((response) => {
+			console.log("-----count at '/editArticle'-----");
+			console.log(response.data());//count object print
+			console.log("-----count at '/editArticle'-----");
+			var postData = {
+				author: req.session.usrmail,
+				currentTime: new Date(),
+				id: doc.id,
+				title: "Sample Title",
+				subtitle: "Sample Subtitle",
+				count: response.data().count//카운트 수 저장
+			};
+			var countObj = {
+				count: response.data().count + 1
+			};
+			doc.set(postData);//1 doc is created.
+			countRef.set(countObj);
+			res.render('editArticle', {
+				usrmail: req.session.usrmail,
+				articleId: doc.id
+			}); //계정 상태 유효할 시, 글 작성 페이지로
+			io.on('connection', (socket) => {
+				socket.on('editedContents', (data) => {
+					console.log("----- socket내부 -----");
+					console.log(data);
+					postData.id = data.articleId;
+					postData.title = data.title;
+					postData.subtitle = data.subtitle;
+					postData.article = data.article;
+					postData.currentTime = new Date();
+					articlesRef.doc(data.articleId).set(postData); //updating doc (it was created at 112)
+				});
 			});
 		});
 	} else {
@@ -124,9 +149,9 @@ router.get('/editArticle', (req, res, next) => {
 	}
 });
 
-router.get('/updateArticle/:id', (req, res, next) => {
+router.get('/updateArticle/:id', (req, res) => {
 	if(req.session.isLogin) {
-		db.collection('articles').doc(req.params.id).get().then((response) => {
+		articlesRef.doc(req.params.id).get().then((response) => {
 			var postData = {
 				title: response.data().title,
 				subtitle: response.data().subtitle,
@@ -143,7 +168,7 @@ router.get('/updateArticle/:id', (req, res, next) => {
 					postData.article = data.article;
 					postData.currentTime = new Date();
 					postData.id = data.articleId;
-					db.collection('articles').doc(data.articleId).set(postData);
+					articlesRef.doc(data.articleId).set(postData);
 				});
 			});
 		}).catch((err) => {
@@ -152,12 +177,12 @@ router.get('/updateArticle/:id', (req, res, next) => {
 			console.log("-----Error at '/updateArticle/:id'-----");
 		});
 	} else {
-		res.redirect('login');
+		res.redirect('/login');
 	}
 });
 
-router.get('/viewArticle/:id', (req, res, next) => {
-    var doc = db.collection("articles").doc(req.params.id);
+router.get('/viewArticle/:id', (req, res) => {
+    var doc = articlesRef.doc(req.params.id);
     doc.get().then((doc) => {
 		if (!doc.exists) {
 			console.log("Doc is NOT exist.");
@@ -173,10 +198,9 @@ router.get('/viewArticle/:id', (req, res, next) => {
 	});
 });
 
-router.get('/articles/:author', (req, res, next) => {
-    //var user = firebase.auth().currentUser;
+router.get('/articles/:author', (req, res) => {
     if (req.params.author == 'all') {
-        db.collection('articles').orderBy("currentTime").get().then((response) => {
+        articlesRef.orderBy("currentTime").get().then((response) => {
 			var articles = [];
 			response.forEach((doc) => {
 				var articleData = doc.data();
@@ -192,7 +216,7 @@ router.get('/articles/:author', (req, res, next) => {
 			console.log("-----Error at '/articles/all'-----");
 		});
     } else if (req.params.author) {
-        db.collection('articles').orderBy("currentTime").where("author", "==", req.params.author).get().then((response) => {
+        articlesRef.orderBy("currentTime").where("author", "==", req.params.author).get().then((response) => {
 			var articles = [];
 			response.forEach((doc) => {
 				var articleData = doc.data();
@@ -212,11 +236,20 @@ router.get('/articles/:author', (req, res, next) => {
 	}
 });
 
-router.post('/delete', function (req, res, next) {
+router.post('/delete', function (req, res) {
     console.log("-----at '/delete'-----");
     console.log(req.body.id);
     console.log("-----at '/delete'-----");
-    db.collection('articles').doc(req.body.id).delete().then(() => {
+    articlesRef.doc(req.body.id).delete().then(() => {
+		countRef.get().then((response) => {
+			console.log("-----count at '/delete'-----");
+			console.log(response.data());
+			console.log("-----count at '/delete'-----");
+			var countObj = {
+				count: response.data().count - 1
+			};
+			countRef.set(countObj);
+		});
 		res.redirect('articles/all');
 	}).catch((err) => {
 		console.log("-----Error at /delete("+req.body.id+")-----");
@@ -225,7 +258,7 @@ router.post('/delete', function (req, res, next) {
 	});
 });
 
-router.get('/error', (req, res, next) => {
+router.get('/error', (res) => {
 	res.render('error');
 });
 

@@ -1,58 +1,66 @@
+/*header section*/
 h1 {
+	display: inline;
+	padding-top: 30px;
     padding-left: 70px;
-    padding-top: 30px;
     font-size: 3rem;
     font-weight: bold;
-    display: inline;
 }
-
+.title {
+	margin-top: 26px;
+    margin-bottom: 39px;
+}
+/*header section*/
 button {
     position: absolute;
     right: 0;
 }
-
-.title {
-    margin-bottom: 39px;
-    margin-top: 26px;
+/*header button section*/
+.header-button {
+	margin-top: 5px;
 }
-
-.list {
-    box-shadow: 0px 0px 6px 0px rgba(0,0,0,0.75);
-    margin-left: 50px;
-    margin-right: 50px;
-    border-radius: .25rem;
-}
-
-.list:hover {
-    box-shadow: 0px 2px 10px 0px rgba(0,0,0,0.75);
-    transition: .5s;
-}
-
 .edit-article {
-    margin-right: 35px;
-    margin-top: 5px;
+    margin-right: 98px;
+}
+.edit-article-login {
+	margin-right: 209px;
 }
 .logout {
-    margin-right: 35px;
-    margin-top: 5px;
+    margin-right: 98px;
 }
 form {
     display: inline;
 }
-.author {
-    position: absolute;
-    right: 0;
-    margin-right: 20px;
+.home {
+	margin-right: 35px;
 }
-.edit {
-    top: 5px;
+/*header button section*/
+/*articles list section*/
+.list {
+    box-shadow: 0 0 6px 0 rgba(0,0,0,0.75);
+    margin-left: 50px;
+    margin-right: 50px;
+    border-radius: .25rem;
+	transition: .5s;
+}
+.list:hover {
+    box-shadow: 0 2px 10px 0 rgba(0,0,0,0.75);
+    transition: .5s;
+}
+.author {
+    float: right;
+    margin-right: 0;
+}
+.author-login {
+	margin-right: 130px;
+}
+.list-button {
+	top: 5px;
+}
+.article-update {
     margin-right: 70px;
 }
-.remove {
-    top: 5px;
+.article-remove {
     margin-right: 5px;
 }
-.author-container {
-    float: right;
-    margin-right: 130px;
-}
+/*articles list section*/

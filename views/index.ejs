@@ -8,54 +8,93 @@
   <link rel='stylesheet' href='/stylesheets/bootstrap.min.css'>
   <link rel="stylesheet" href="/stylesheets/style-index.css">
 	<style>
-		@media (max-width: 374px) {
-			.title-container {
-				width: 100%;
-				left: 0;
-				margin-left: 0;
+		<% if(!currentUser) { %>
+			@media (max-width: 244px) {
+				.fixed-top {
+					margin-top: 30px;
+				}
+
+				.articles {
+					margin-bottom: 10px;
+					margin-right: 0;
+				}
+
+				.btn {
+					display: block;
+					margin-right: auto;
+					margin-left: auto;
+					width: 85%;
+					position: static;
+					margin-top: 0;
+				}
 			}
-		}
-		@media (max-width: 244px) {
-			.fixed-top {
-				margin-top: 30px;
-			}
-			
+		<% } else { %>
 			.articles {
-				margin-bottom: 15px;
-				margin-right: 0;
+				margin-right: 146px;
 			}
-			
-			.btn {
-				display: block;
-				margin: auto;
-				width: 85%;
-				position: static;
+			@media (max-width: 259px) {
+				.fixed-top {
+					margin-top: 30px;
+				}
+
+				.articles {
+					margin-bottom: 10px;
+					margin-right: 0;
+				}
+
+				.btn {
+					display: block;
+					margin-right: auto;
+					margin-left: auto;
+					width: 85%;
+					position: static;
+					margin-top: 0;
+				}
 			}
-		}
+		<% } %>
 	</style>
 </head>
 <body>
   <div class="container-fluid main-screen">
     <div class="title-container">
-        <h2 class="title">Sample Title</h2>
-        <h6 class="author">Author</h6>
-        <p class="subtitle">Sample SubTitle</p>
+		<% if(docInfo) { %>
+			<h2 class="title" onclick="location.href = '/viewArticle/<%= docInfo.id%>'"><%= docInfo.title%></h2>
+			<h6 class="author" onclick="location.href = '/articles/<%= docInfo.author%>'"><%= docInfo.author%></h6>
+			<p class="subtitle" onclick="location.href = '/viewArticle/<%= docInfo.id%>'"><%= docInfo.subtitle%></p>
+		<% } else { %>
+			<h2 class="title">없음</h2>
+			<h6 class="author">없음</h6>
+			<p class="subtitle">없음</p>
+		<% } %>
     </div>
     <div class="fixed-top">
         <button type="button" class="btn btn-primary articles" onclick="location.href='/articles/all'">글 목록</button>
         <% if(!currentUser) { %>
-          <button type="button" class="btn btn-primary login" onclick="location.href='/login'">로그인</button>
+          <button type="button" class="btn btn-primary sign" onclick="location.href='/login'">로그인</button>
         <% } else { %>
           <form action="logout" method="post">
-            <button type="submit" class="btn btn-primary">로그아웃</button>
+            <button type="submit" class="btn btn-primary sign">로그아웃</button>
           </form>
-          <script>
-            document.querySelector('.articles').style.marginRight = "140px";
-          </script>
         <% } %>
-        
     </div>
   </div>
+	<!--<script>
+		var titleContainerInitWidth = document.querySelector(".title-container").offsetWidth;
+		
+		function titleContainerResizing() {
+			var titleContainerFluidWidth = document.querySelector(".title-container").offsetWidth;
+			console.log("asd");
+			if (document.querySelector("html").offsetWidth - (50 + titleContainerInitWidth) < 50) {
+				document.querySelector(".title-container").classList.add("small-title-container");
+			} else {
+				document.querySelector(".title-container").classList.remove("small-title-container");
+			}
+		}
+		
+		window.addEventListener("load", titleContainerResizing());
+		window.addEventListener("resize", titleContainerResizing());
+		
+	</script>-->
   <script src="/javascripts/jquery-3.4.0.slim.min.js" charset="utf-8"></script>
   <script src="/javascripts/popper.min.js" charset="utf-8"></script>
   <script src="/javascripts/bootstrap.min.js" charset="utf-8"></script>

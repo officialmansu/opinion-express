@@ -8,15 +8,15 @@
     <link href="https://fonts.googleapis.com/css?family=Noto+Serif" rel="stylesheet">
     <link rel="stylesheet" href="/stylesheets/default.css">
     <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
-    <link rel="stylesheet" href="/stylesheets/edit-article.css">
+    <link rel="stylesheet" href="/stylesheets/style-edit-article.css">
     <title>Document</title>
 </head>
 <body>
     <div class="container-fluid title-container">
         <div class="row">
             <div class="col-8">
-                <h2 class="title" contenteditable="true" spellcheck="false" required></h2>
-                <p class="subtitle" contenteditable="true" spellcheck="false" required></p>
+                <h2 class="title" contenteditable="true" spellcheck="false"></h2>
+                <p class="subtitle" contenteditable="true" spellcheck="false"></p>
             </div>
             <div class="col-4">
                 <h6 class="author"></h6>
@@ -29,7 +29,7 @@
     <script src="/javascripts/jquery-3.4.0.slim.min.js"></script>
     <script src="/javascripts/socket.io.js"></script>
     <script>
-        var editor = new MediumEditor('.editable', {
+        let editor = new MediumEditor('.editable', {
             spellcheck: false,
             toolbar: {
                 buttons: ['bold', 'italic', 'underline', 'anchor', 'h2', 'h3', 'quote', 'orderedlist', 'unorderedlist']
@@ -38,12 +38,12 @@
     </script>
     <script>
         function htmlDecode(input) {
-            var doc = new DOMParser().parseFromString(input, "text/html");
+            let doc = new DOMParser().parseFromString(input, "text/html");
             return doc.documentElement.textContent;
         }
-        var titleContainer = document.querySelector('h2');
-        var subtitleContainer = document.querySelector('p');
-        var articleContainer = document.querySelectorAll('div')[4];
+        const titleContainer = document.querySelector('h2');
+        const subtitleContainer = document.querySelector('p');
+        const articleContainer = document.querySelector('.editable');
 
         titleContainer.innerHTML = htmlDecode("<%= article.title%>");
         subtitleContainer.innerHTML = htmlDecode("<%= article.subtitle%>");
@@ -51,7 +51,7 @@
     </script>
 	<script>
 		function clearText(elem) {
-			var el = document.querySelector(elem);
+			const el = document.querySelector(elem);
 			el.addEventListener('click', function() {
 				el.innerText = '';
 			});
@@ -60,45 +60,39 @@
 		clearText(".subtitle");
 	</script>
     <script>
-        var socket = io.connect('http://13.125.11.216:58245');
-        var content = {
-            article: $('.editable'),
-            title: $('.title'),
-            subtitle: $('.subtitle'),
-            articleId: $('#articleId')
+        const socket = io.connect('http://13.125.209.158:51631');
+        let contentRef = {
+            article: document.querySelector(".editable"),
+            title: document.querySelector(".title"),
+            subtitle: document.querySelector(".subtitle"),
+            articleId: document.querySelector("#articleId")
         }
-        $('.editable').on('input', function() {
-            socket.emit('editedContents', 
-            {
-                article: content.article.html(),
-                title: content.title.html(),
-                subtitle: content.subtitle.html(),
-                articleId: content.articleId.attr("name")
-            });
+        contentRef.article.addEventListener("input", () => {
+            socket.emit('editedContents', {
+				article: contentRef.article.innerHTML,
+				title: contentRef.title.innerHTML,
+				subtitle: contentRef.subtitle.innerHTML,
+				articleId: contentRef.articleId.getAttribute("name")
+			});
         });
-        $('.title').on('input', function() {
-            socket.emit('editedContents', 
-            {
-                article: content.article.html(),
-                title: content.title.html(),
-                subtitle: content.subtitle.html(),
-                articleId: content.articleId.attr("name")
-            });
+		contentRef.title.addEventListener("input", () => {
+            socket.emit('editedContents', {
+				article: contentRef.article.innerHTML,
+				title: contentRef.title.innerHTML,
+				subtitle: contentRef.subtitle.innerHTML,
+				articleId: contentRef.articleId.getAttribute("name")
+			});
         });
-        $('.subtitle').on('input', function() {
-            socket.emit('editedContents', 
-            {
-                article: content.article.html(),
-                title: content.title.html(),
-                subtitle: content.subtitle.html(),
-                articleId: content.articleId.attr("name")
-            });
+		contentRef.subtitle.addEventListener("input", () => {
+            socket.emit('editedContents', {
+				article: contentRef.article.innerHTML,
+				title: contentRef.title.innerHTML,
+				subtitle: contentRef.subtitle.innerHTML,
+				articleId: contentRef.articleId.getAttribute("name")
+			});
         });
     </script>
     <script src="/javascripts/popper.min.js"></script>
     <script src="/javascripts/bootstrap.min.js"></script>
 </body>
 </html>
-
-<!--수정 방법은 jQuery .append("저장된 내용") 으로 불러오면 된다.-->
-<!--저장 방법은 editor.getContent해서 나온 HTML코드를 저장하면 된다.-->

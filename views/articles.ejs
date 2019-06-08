@@ -7,40 +7,36 @@
     <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
     <link rel="stylesheet" href="/stylesheets/style-articles.css">
     <title>Articles</title>
-    <style>
-        .author-container {
-            margin-right: 0;
-        }
-    </style>
 </head>
 <body>
     <div class="title">
         <h1>글</h1>
-        <button id="edit-article" class="edit-article btn btn-primary" type="button" onclick="location.href='/editArticle'">글 작성</button>
+        <button class="edit-article header-button btn btn-primary" type="button" onclick="location.href='/editArticle'">글 작성</button>
         <%if (currentUser) { %>
             <form action="/logout" method="POST">
-                <button class="logout btn btn-light" type="submit">로그아웃</button>
+                <button class="logout header-button btn btn-light" type="submit">로그아웃</button>
             </form>
             <script>
-                document.getElementById("edit-article").style.marginRight = "140px";
+                document.querySelector(".edit-article").classList.add("edit-article-login");
             </script>
         <% } %>
+		<button class="home header-button btn btn-light " onclick="location.href = '/'">홈</button>
     </div>
     <div class="list">
         <% for(var i=1;i <= articles.length; i++) { %>
             <ul class="list-group">
                 <li class="list-group-item">
                     <span class="title-container" onclick="location.href = '/viewArticle/<%= articles[articles.length-i].id%>'"><%= articles[articles.length-i].title %></span>
-                    <span class="author-container" onclick="location.href = '/articles/<%= articles[articles.length-i].author %>'"><%= articles[articles.length-i].author %></span>
+                    <span class="author" onclick="location.href = '/articles/<%= articles[articles.length-i].author %>'"><%= articles[articles.length-i].author %></span>
                     <%if (currentUser == articles[articles.length-i].author) { %>
                         <script>
-                            document.querySelectorAll(".author-container")[<%= i-1%>].style.marginRight = 130 + 'px';
+                            document.querySelectorAll(".author")[<%= i-1%>].classList.add("author-login");
                         </script>
                         <span>
-                            <button type="button" class="btn btn-light edit" onclick="location.href = '/updateArticle/<%= articles[articles.length-i].id%>'">수정</button>
+                            <button type="button" class="article-update list-button btn btn-light" onclick="location.href = '/updateArticle/<%= articles[articles.length-i].id%>'">수정</button>
                             <form action="/delete" method="post">
                                 <input type="hidden" name="id" value="<%= articles[articles.length-i].id%>">
-                                <button type="submit" class="btn btn-light remove">삭제</button>
+                                <button type="submit" class="article-remove list-button btn btn-light">삭제</button>
                             </form>
                         </span>
                     <% } %>
