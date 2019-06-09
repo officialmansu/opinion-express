@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/stylesheets/default.css">
     <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
     <link rel="stylesheet" href="/stylesheets/style-edit-article.css">
-    <title>Document</title>
+    <title>새 글</title>
 </head>
 <body>
     <div class="container-fluid title-container">
@@ -30,7 +30,7 @@
     <script src="/javascripts/jquery-3.4.0.slim.min.js"></script>
     <script src="/javascripts/socket.io.js"></script>
     <script>
-        var editor = new MediumEditor('.editable', {
+        let editor = new MediumEditor('.editable', {
             spellcheck: false,
             toolbar: {
                 buttons: ['bold', 'italic', 'underline', 'anchor', 'h2', 'h3', 'quote', 'orderedlist', 'unorderedlist']
