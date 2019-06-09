@@ -1,11 +1,10 @@
-var express = require('express');
-var session = require('express-session');
-var router = express.Router();
-var firebase = require("firebase");
-var server = require('http').Server(express);
-var io = require('socket.io')(server);
+const express = require('express');
+const router = express.Router();
+const firebase = require("firebase");
+const server = require('http').Server(express);
+const io = require('socket.io')(server);
 
-var firebaseConfig = {
+const firebaseConfig = {
     apiKey: "AIzaSyBo5SePT0lxxtA40y8QBVvptNbUO1kGApY",
     authDomain: "opinion-express.firebaseapp.com",
     databaseURL: "https://opinion-express.firebaseio.com",
@@ -16,7 +15,7 @@ var firebaseConfig = {
 };
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
-var db = firebase.firestore();
+const db = firebase.firestore();
 
 const articlesRef = db.collection("articles");
 const countRef = db.collection("count").doc("count");
@@ -24,18 +23,21 @@ const countRef = db.collection("count").doc("count");
 /* GET home page. */
 router.get('/', (req, res) => {
 	articlesRef.get().then((response) => {
-		var articles = [];
+		let articles = [];
 		response.forEach((doc) => {
-			var articleData = doc.data();
+			let articleData = doc.data();
 			articles.push(articleData);
 		});
-		var len = articles.length;
+		let len = articles.length;
 		res.render('index', {
 			currentUser: req.session.isLogin,
 			docInfo: articles[Math.floor(Math.random()*100)%len]
 		});
 	}).catch((err) => {
 		console.log("-----Error(get count) at '/'-----");
+		res.render('error', {
+			error: err
+		});
 		console.log(err);
 		console.log("-----Error(get count) at '/'-----");
 	});
@@ -109,12 +111,12 @@ router.post('/logout', (req, res) => {
 server.listen(3003);
 router.get('/editArticle', (req, res) => {
 	if(req.session.isLogin) {
-		var doc = articlesRef.doc();
+		let doc = articlesRef.doc();
 		countRef.get().then((response) => {
 			console.log("-----count at '/editArticle'-----");
 			console.log(response.data());//count object print
 			console.log("-----count at '/editArticle'-----");
-			var postData = {
+			let postData = {
 				author: req.session.usrmail,
 				currentTime: new Date(),
 				id: doc.id,
@@ -122,7 +124,7 @@ router.get('/editArticle', (req, res) => {
 				subtitle: "Sample Subtitle",
 				count: response.data().count//카운트 수 저장
 			};
-			var countObj = {
+			let countObj = {
 				count: response.data().count + 1
 			};
 			doc.set(postData);//1 doc is created.
@@ -152,7 +154,7 @@ router.get('/editArticle', (req, res) => {
 router.get('/updateArticle/:id', (req, res) => {
 	if(req.session.isLogin) {
 		articlesRef.doc(req.params.id).get().then((response) => {
-			var postData = {
+			let postData = {
 				title: response.data().title,
 				subtitle: response.data().subtitle,
 				article: response.data().article,
@@ -174,6 +176,9 @@ router.get('/updateArticle/:id', (req, res) => {
 		}).catch((err) => {
 			console.log("-----Error at '/updateArticle/:id'-----");
 			console.log(err);
+			res.render('error', {
+				error: err
+			});
 			console.log("-----Error at '/updateArticle/:id'-----");
 		});
 	} else {
@@ -182,7 +187,7 @@ router.get('/updateArticle/:id', (req, res) => {
 });
 
 router.get('/viewArticle/:id', (req, res) => {
-    var doc = articlesRef.doc(req.params.id);
+    let doc = articlesRef.doc(req.params.id);
     doc.get().then((doc) => {
 		if (!doc.exists) {
 			console.log("Doc is NOT exist.");
@@ -194,6 +199,9 @@ router.get('/viewArticle/:id', (req, res) => {
 	}).catch((err) => {
 		console.log("-----Error at /viewArticle/"+req.params.id+"-----");
 		console.log(err);
+		res.render('error', {
+			error: err
+		});
 		console.log("-----Error at /viewArticle/"+req.params.id+"-----");
 	});
 });
@@ -201,9 +209,9 @@ router.get('/viewArticle/:id', (req, res) => {
 router.get('/articles/:author', (req, res) => {
     if (req.params.author == 'all') {
         articlesRef.orderBy("currentTime").get().then((response) => {
-			var articles = [];
+			let articles = [];
 			response.forEach((doc) => {
-				var articleData = doc.data();
+				let articleData = doc.data();
 				articles.push(articleData);
 			});
 			res.render('articles', {
@@ -213,13 +221,16 @@ router.get('/articles/:author', (req, res) => {
 		}).catch((err) => {
 			console.log("-----Error at '/articles/all'-----");
 			console.log(err);
+			res.render('error', {
+				error: err
+			});
 			console.log("-----Error at '/articles/all'-----");
 		});
     } else if (req.params.author) {
         articlesRef.orderBy("currentTime").where("author", "==", req.params.author).get().then((response) => {
-			var articles = [];
+			let articles = [];
 			response.forEach((doc) => {
-				var articleData = doc.data();
+				let articleData = doc.data();
 				articles.push(articleData);
 			});
 			res.render('articles', {
@@ -229,6 +240,9 @@ router.get('/articles/:author', (req, res) => {
 		}).catch((err) => {
 			console.log("-----Error at /articles/"+req.params.author+"-----");
 			console.log(err);
+			res.render('error', {
+				error: err
+			});
 			console.log("-----Error at /articles/"+req.params.author+"-----");
 		});
     } else {
@@ -245,7 +259,7 @@ router.post('/delete', function (req, res) {
 			console.log("-----count at '/delete'-----");
 			console.log(response.data());
 			console.log("-----count at '/delete'-----");
-			var countObj = {
+			let countObj = {
 				count: response.data().count - 1
 			};
 			countRef.set(countObj);
@@ -254,6 +268,9 @@ router.post('/delete', function (req, res) {
 	}).catch((err) => {
 		console.log("-----Error at /delete("+req.body.id+")-----");
 		console.log(err);
+		res.render('error', {
+			error: err
+		});
 		console.log("-----Error at /delete("+req.body.id+")-----");
 	});
 });
