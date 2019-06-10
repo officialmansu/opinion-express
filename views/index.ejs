@@ -78,23 +78,34 @@
         <% } %>
     </div>
   </div>
-	<!--<script>
-		var titleContainerInitWidth = document.querySelector(".title-container").offsetWidth;
-		
-		function titleContainerResizing() {
+	<script>
+		/*function titleContainerResizing() {
+			var htmlFluidWidth = document.querySelector("html").offsetWidth;
 			var titleContainerFluidWidth = document.querySelector(".title-container").offsetWidth;
 			console.log("asd");
-			if (document.querySelector("html").offsetWidth - (50 + titleContainerInitWidth) < 50) {
+			if (htmlFluidWidth - (50 + titleContainerFluidWidth) < 50) {
 				document.querySelector(".title-container").classList.add("small-title-container");
 			} else {
 				document.querySelector(".title-container").classList.remove("small-title-container");
 			}
-		}
+		}*/
 		
-		window.addEventListener("load", titleContainerResizing());
-		window.addEventListener("resize", titleContainerResizing());
+		window.addEventListener("load", () => {
+	        	if((document.querySelector("html").offsetWidth - (50 + document.querySelector(".title-container").offsetWidth)) > 50) {
+				document.querySelector(".title-container").classList.remove("small-title-container");
+			} else {
+				document.querySelector(".title-container").classList.add("small-title-container");
+			}
+		});
+		window.addEventListener("resize", () => {
+			if((document.querySelector("html").offsetWidth - (50 + document.querySelector(".title-container").offsetWidth)) > 50) {
+				document.querySelector(".title-container").classList.remove("small-title-container");
+			} else {
+				document.querySelector(".title-container").classList.add("small-title-container");
+			}
+		});
 		
-	</script>-->
+	</script>
   <script src="/javascripts/jquery-3.4.0.slim.min.js" charset="utf-8"></script>
   <script src="/javascripts/popper.min.js" charset="utf-8"></script>
   <script src="/javascripts/bootstrap.min.js" charset="utf-8"></script>

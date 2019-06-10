@@ -21,7 +21,7 @@
             <div class="col-4">
                 <h6 class="author"><%= usrmail%></h6>
             </div>
-			<button class="exit btn btn-primary" onclick="location.href = '/articles/all'">나가기</button>
+			<button class="exit btn btn-primary" onclick="location.href = '/articles/all'">저장</button>
         </div>
     </div>
     <div class="editable"></div>
@@ -54,7 +54,7 @@
             subtitle: document.querySelector(".subtitle"),
             articleId: document.querySelector("#articleId")
 		}
-        const socket = io.connect('http://localhost:3003');
+        const socket = io.connect('http://146.148.104.124:3003');
         contentRef.article.addEventListener("input", () => {
             socket.emit('editedContents', {
 				article: contentRef.article.innerHTML,

@@ -2,6 +2,14 @@ body {
     overflow-x: hidden;
 }
 
+.comment {
+    position:fixed;
+    height: 100vh;
+    width: 100%;
+    top: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
 .title-container {
     margin-top: 20px;
     width: 70%;
@@ -48,6 +56,8 @@ body {
 blockquote {
     font-family: 'Noto Serif', serif;
     font-size: 20px;
+	overflow: hidden;
+	word-break: break-word;
 	padding-top: 10px;
     padding-left: 10px;
     padding-bottom: 10px;

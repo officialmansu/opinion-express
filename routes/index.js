@@ -20,6 +20,14 @@ const db = firebase.firestore();
 const articlesRef = db.collection("articles");
 const countRef = db.collection("count").doc("count");
 
+countRef.get().then((doc) => {
+	if(!doc.exists) {
+		countRef.set({
+			count: 0
+		});
+	}
+});
+
 /* GET home page. */
 router.get('/', (req, res) => {
 	articlesRef.get().then((response) => {
@@ -205,6 +213,10 @@ router.get('/viewArticle/:id', (req, res) => {
 		console.log("-----Error at /viewArticle/"+req.params.id+"-----");
 	});
 });
+
+/*router.get('/comments/:id', (req, res) => {
+    res.render('comments', );
+});*/
 
 router.get('/articles/:author', (req, res) => {
     if (req.params.author == 'all') {
