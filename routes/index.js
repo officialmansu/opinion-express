@@ -3,16 +3,18 @@ const router = express.Router();
 const firebase = require("firebase");
 const server = require('http').Server(express);
 const io = require('socket.io')(server);
+const firebase_config = require('../../configs/firebase.json');
 
 const firebaseConfig = {
-    apiKey: "AIzaSyBo5SePT0lxxtA40y8QBVvptNbUO1kGApY",
-    authDomain: "opinion-express.firebaseapp.com",
-    databaseURL: "https://opinion-express.firebaseio.com",
-    projectId: "opinion-express",
-    storageBucket: "opinion-express.appspot.com",
-    messagingSenderId: "978199192904",
-    appId: "1:978199192904:web:aa91748de9114389"
+    apiKey: firebase_config.apiKey,
+    authDomain: firebase_config.authDomain,
+    databaseURL: firebase_config.databaseURL,
+    projectId: firebase_config.projectId,
+    storageBucket: firebase_config.storageBucket,
+    messagingSenderId: firebase_config.messagingSenderId,
+    appId: firebase_config.appId
 };
+
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
